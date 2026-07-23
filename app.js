@@ -14,7 +14,9 @@ async function readFile(file) {
 // Faylni yuklab berish
 function downloadFile(data, filename) {
 
-    const blob = new Blob([data]);
+    const blob = new Blob([data], {
+        type: "application/octet-stream"
+    });
 
     const url = URL.createObjectURL(blob);
 
@@ -23,11 +25,12 @@ function downloadFile(data, filename) {
     a.href = url;
     a.download = filename;
 
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
 
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-
 
 // Paroldan AES kalit hosil qilish
 async function deriveKey(password, salt) {
@@ -108,7 +111,7 @@ encryptBtn.addEventListener("click", async () => {
     // Yuklab olish
     downloadFile(
         result,
-        file.name + ".enc"
+        "encrypted.enc"
     );
 
 }); 
@@ -156,7 +159,7 @@ decryptBtn.addEventListener("click", async () => {
         }
 
         // Yuklab olish
-        downloadFile(decrypted, filename);
+        downloadFile(decrypted,  "decrypted.txt");
 
     } catch (err) {
 
